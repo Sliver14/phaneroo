@@ -16,6 +16,7 @@ export const getGoogleCalendarLink = () => {
 
 export const getRegistrationEmailTemplate = (userName: string) => {
   const calendarLink = getGoogleCalendarLink();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://phaneroo-ph.vercel.app";
   
   return `
     <!DOCTYPE html>
@@ -114,7 +115,7 @@ export const getRegistrationEmailTemplate = (userName: string) => {
     <body>
       <div class="container">
         <div class="header">
-          <img src="https://phaneroo-ph.vercel.app/phanero.png" alt="Phaneroo Port Harcourt" class="banner">
+          <img src="${baseUrl}/phanero.png" alt="Phaneroo Port Harcourt" class="banner">
         </div>
         
         <div class="content">
@@ -159,6 +160,7 @@ export const getEmailTemplate = (userName: string, daysRemaining: number) => {
   const subheadline = isEventDay 
     ? "The glory of the Lord is about to be revealed."
     : "Prepare your heart for a manifestation of glory.";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://phaneroo-ph.vercel.app";
 
   return `
     <!DOCTYPE html>
@@ -181,9 +183,13 @@ export const getEmailTemplate = (userName: string, daysRemaining: number) => {
           border-top: 4px solid #F5C518;
         }
         .header {
-          padding: 40px 20px;
+          padding: 0;
           text-align: center;
-          background: linear-gradient(to bottom, #111111, #0A0A0A);
+          background-color: #000000;
+        }
+        .banner {
+          width: 100%;
+          display: block;
         }
         .eyebrow {
           color: #F5C518;
@@ -255,12 +261,16 @@ export const getEmailTemplate = (userName: string, daysRemaining: number) => {
     <body>
       <div class="container">
         <div class="header">
-          <div class="eyebrow">Phaneroo Port Harcourt</div>
-          <h1 class="headline">${headline}</h1>
-          <p style="color: #C9A000; font-family: 'Bebas Neue', cursive; font-size: 18px; letter-spacing: 3px; margin-top: 10px;">Manifestation & Glory</p>
+          <img src="${baseUrl}/phanero.png" alt="Phaneroo Port Harcourt" class="banner">
         </div>
         
         <div class="content">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <div class="eyebrow">Phaneroo Port Harcourt</div>
+            <h1 class="headline">${headline}</h1>
+            <p style="color: #C9A000; font-family: 'Bebas Neue', cursive; font-size: 18px; letter-spacing: 3px; margin-top: 10px;">Manifestation & Glory</p>
+          </div>
+
           <div class="greeting">Hello ${userName},</div>
           <div class="message">
             ${subheadline} We are expectant and ready to witness what the Lord has in store for us at Opal Place.
@@ -278,7 +288,7 @@ export const getEmailTemplate = (userName: string, daysRemaining: number) => {
           </div>
           
           <div style="text-align: center;">
-            <a href="#" class="button">See You There</a>
+            <a href="${baseUrl}" class="button">See You There</a>
           </div>
         </div>
         
