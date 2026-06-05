@@ -44,6 +44,7 @@ export default function Home() {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [wasAlreadyRegistered, setWasAlreadyRegistered] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
@@ -84,11 +85,18 @@ export default function Home() {
           body: JSON.stringify(formData),
         });
 
-        if (response.ok) {
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          if (result.alreadyRegistered) {
+            setWasAlreadyRegistered(true);
+            // Update form data with existing data if needed, 
+            // but we already have what they just typed
+          }
           setIsSubmitted(true);
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
-          alert("Something went wrong. Please try again.");
+          alert(result.error || "Something went wrong. Please try again.");
         }
       } catch (error) {
         console.error("Submission error:", error);
@@ -110,6 +118,24 @@ export default function Home() {
       `Join me at Phaneroo Port Harcourt — Manifestation & Glory! 🔥\n📅 Fri 26 & Sat 27 June 2026\n📍 Opal Place, NTA Road\n\nRegister here: ${window.location.href}`
     );
     window.open(`https://wa.me/?text=${msg}`, "_blank");
+  };
+
+  const addToCalendar = () => {
+    const event = {
+      title: "Phaneroo Port Harcourt: Manifestation & Glory",
+      description: "Prepare your heart for a manifestation of glory at Opal Place.",
+      location: "Opal Place, NTA Road, Port Harcourt",
+      startTime: "20260626T150000Z",
+      endTime: "20260627T210000Z",
+    };
+
+    const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+      event.title
+    )}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(
+      event.location
+    )}&dates=${event.startTime}/${event.endTime}`;
+    
+    window.open(url, "_blank");
   };
 
   if (isSubmitted) {
@@ -135,8 +161,12 @@ export default function Home() {
             </div>
           </div>
 
-          <h2>YOU&apos;RE IN!</h2>
-          <p className="sub-heading">Registration Confirmed</p>
+          <h2>{wasAlreadyRegistered ? "ALREADY REGISTERED!" : "YOU'RE IN!"}</h2>
+          <p className="sub-heading">
+            {wasAlreadyRegistered 
+              ? "You have already signed up for this event." 
+              : "Registration Confirmed"}
+          </p>
 
           <div className="detail-card">
             <p className="card-title">
@@ -206,6 +236,16 @@ export default function Home() {
                 <p className="value">Opal Place, NTA Road, Opp. National Open University</p>
               </div>
             </div>
+          </div>
+
+          <div style={{ marginTop: "20px", width: "100%" }}>
+            <button 
+              className="submit-btn" 
+              onClick={addToCalendar}
+              style={{ backgroundColor: "transparent", border: "2px solid #FFC630", color: "#FFC630" }}
+            >
+              <IconCalendarEvent size={20} /> Add to Google Calendar
+            </button>
           </div>
 
           <div className="next-steps">
