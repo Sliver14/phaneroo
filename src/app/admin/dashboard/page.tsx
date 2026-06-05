@@ -65,17 +65,9 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--black)', color: 'var(--white)', padding: '20px' }}>
+    <div className="admin-container" style={{ minHeight: '100vh', background: 'var(--black)', color: 'var(--white)', padding: '20px' }}>
       {/* Header */}
-      <div style={{ 
-        maxWidth: '1200px', 
-        margin: '0 auto', 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        padding: '20px 0',
-        borderBottom: '1px solid var(--gray-border)'
-      }}>
+      <div className="admin-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <div className="eyebrow" style={{ margin: 0 }}>
             <IconUsers size={14} /> ADMIN DASHBOARD
@@ -83,7 +75,7 @@ export default function AdminDashboard() {
           <h1 style={{ fontSize: '24px', margin: 0 }}>REGISTRATIONS</h1>
         </div>
         
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="admin-actions">
           <a 
             href="/api/admin/export" 
             className="share-btn" 
@@ -103,7 +95,7 @@ export default function AdminDashboard() {
 
       <main style={{ maxWidth: '1200px', margin: '40px auto' }}>
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+        <div className="stats-grid">
           <div className="form-card" style={{ padding: '20px' }}>
             <div className="detail-card" style={{ margin: 0, padding: 0, border: 'none', background: 'transparent' }}>
               <div className="card-title">TOTAL REGISTERED</div>
@@ -121,7 +113,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Search */}
-        <div className="field-group" style={{ maxWidth: '400px', marginBottom: '30px' }}>
+        <div className="field-group search-box" style={{ maxWidth: '400px', marginBottom: '30px' }}>
           <label><IconSearch size={16} /> SEARCH USERS</label>
           <input 
             type="text" 
@@ -138,7 +130,7 @@ export default function AdminDashboard() {
               <IconLoader2 className="animate-spin" size={40} color="var(--gold)" />
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
               <thead>
                 <tr style={{ background: '#111', borderBottom: '2px solid var(--gray-border)' }}>
                   <th style={thStyle}>NAME</th>
@@ -219,6 +211,50 @@ export default function AdminDashboard() {
         .animate-spin { animation: spin 1s linear infinite; }
         .table-row:hover { background: #161616; }
         th { font-family: var(--font-bebas-neue), cursive; letter-spacing: 1px; }
+
+        .admin-header {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px 0;
+          border-bottom: 1px solid var(--gray-border);
+          flex-wrap: wrap;
+          gap: 20px;
+        }
+
+        .admin-actions {
+          display: flex;
+          gap: 10px;
+        }
+
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+          marginBottom: 30px;
+        }
+
+        @media (max-width: 600px) {
+          .admin-header {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .admin-actions {
+            width: 100%;
+          }
+          .admin-actions > * {
+            flex: 1;
+            justify-content: center;
+          }
+          .search-box {
+            max-width: 100% !important;
+          }
+          .stats-grid {
+            grid-template-columns: 1fr;
+          }
+        }
       `}</style>
     </div>
   );

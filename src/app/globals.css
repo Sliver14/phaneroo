@@ -186,6 +186,7 @@ main {
 input[type="text"],
 input[type="tel"],
 input[type="email"],
+input[type="password"],
 textarea {
   width: 100%;
   background: var(--gray);
@@ -202,6 +203,7 @@ textarea {
 input[type="text"]:focus,
 input[type="tel"]:focus,
 input[type="email"]:focus,
+input[type="password"]:focus,
 textarea:focus {
   border-left-color: var(--gold);
   background: #161616;
