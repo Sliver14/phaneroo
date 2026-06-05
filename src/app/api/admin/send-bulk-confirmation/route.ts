@@ -18,35 +18,51 @@ export async function POST() {
     }
 
     const result = await query('SELECT full_name, email FROM registrations');
-    const users = result.rows;
+    const users = result.rows.filter(u => u.email);
 
     if (users.length === 0) {
       return NextResponse.json({ message: 'No users found to send emails to.' });
     }
 
-    const results = await Promise.allSettled(users.map(async (user) => {
-      if (!user.email) return;
+    const BATCH_SIZE = 100;
+    let successful = 0;
+    let failed = 0;
 
-      const { data, error } = await resend.emails.send({
+    // Split users into chunks of 100 (Resend batch limit)
+    for (let i = 0; i < users.length; i += BATCH_SIZE) {
+      const chunk = users.slice(i, i + BATCH_SIZE);
+      
+      const batchData = chunk.map(user => ({
         from: `Phaneroo Port Harcourt <${process.env.EMAIL_FROM || "onboarding@resend.dev"}>`,
         to: user.email,
         subject: "Registration Confirmed! Phaneroo Port Harcourt",
         html: getRegistrationEmailTemplate(user.full_name),
-      });
+      }));
 
-      if (error) {
-        console.error(`Resend API Error for ${user.email}:`, error);
-        throw error;
+      try {
+        const { data, error } = await resend.batch.send(batchData);
+        
+        if (error) {
+          console.error(`Resend Batch API Error (Chunk ${i/BATCH_SIZE}):`, error);
+          failed += chunk.length;
+        } else {
+          successful += chunk.length;
+          console.log(`Batch ${i/BATCH_SIZE} sent successfully`);
+        }
+      } catch (err) {
+        console.error(`Failed to send batch ${i/BATCH_SIZE}:`, err);
+        failed += chunk.length;
       }
-      return data;
-    }));
 
-    const successful = results.filter(r => r.status === 'fulfilled').length;
-    const failed = results.filter(r => r.status === 'rejected').length;
+      // Add a 1-second delay between batch requests to safely stay under 5 requests/sec limit
+      if (i + BATCH_SIZE < users.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
 
     return NextResponse.json({ 
       success: true, 
-      message: `Attempted to send ${users.length} emails.`,
+      message: `Processed ${users.length} emails.`,
       stats: { successful, failed }
     });
   } catch (error) {
