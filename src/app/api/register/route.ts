@@ -36,15 +36,24 @@ export async function POST(request: Request) {
 
     // Send confirmation email via Resend
     try {
-      await resend.emails.send({
-        from: `Phaneroo Port Harcourt <${process.env.EMAIL_FROM}>`,
-        to: email,
-        subject: "Registration Confirmed! Phaneroo Port Harcourt",
-        html: getRegistrationEmailTemplate(fullName),
-      });
+      if (!process.env.RESEND_API_KEY) {
+        console.error("Missing RESEND_API_KEY");
+      } else {
+        const { data, error } = await resend.emails.send({
+          from: `Phaneroo Port Harcourt <${process.env.EMAIL_FROM || "onboarding@resend.dev"}>`,
+          to: email,
+          subject: "Registration Confirmed! Phaneroo Port Harcourt",
+          html: getRegistrationEmailTemplate(fullName),
+        });
+
+        if (error) {
+          console.error("Resend API Error:", error);
+        } else {
+          console.log("Email sent successfully:", data?.id);
+        }
+      }
     } catch (mailError) {
-      console.error("Resend error:", mailError);
-      // We don't fail the registration if the email fails, but we log it
+      console.error("Resend connection error:", mailError);
     }
 
     return NextResponse.json({ 

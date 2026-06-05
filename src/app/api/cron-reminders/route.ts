@@ -39,17 +39,27 @@ export async function GET(request: Request) {
     const results = await Promise.allSettled(registrations.map(async (reg) => {
       // 1. Send Email if email exists
       if (reg.email) {
+        if (!process.env.RESEND_API_KEY) {
+          console.error("Missing RESEND_API_KEY for cron reminder");
+          return;
+        }
+
         const html = getEmailTemplate(reg.full_name, diffDays);
         const subject = diffDays === 0 
           ? "TODAY IS THE DAY! Phaneroo Port Harcourt" 
           : `${diffDays} Days to Go! Phaneroo Port Harcourt`;
 
-        await resend.emails.send({
-          from: `Phaneroo Port Harcourt <${process.env.EMAIL_FROM}>`,
+        const { data, error } = await resend.emails.send({
+          from: `Phaneroo Port Harcourt <${process.env.EMAIL_FROM || "onboarding@resend.dev"}>`,
           to: reg.email,
           subject: subject,
           html: html,
         });
+
+        if (error) {
+          console.error(`Resend API Error for ${reg.email}:`, error);
+          throw error; // Reject to count as failed in allSettled
+        }
       }
 
       // 2. Send WhatsApp if number exists and template is configured
