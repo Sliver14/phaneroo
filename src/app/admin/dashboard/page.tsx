@@ -11,7 +11,8 @@ import {
   IconMail, 
   IconBrandWhatsapp, 
   IconBus,
-  IconLoader2
+  IconLoader2,
+  IconSend
 } from '@tabler/icons-react';
 
 interface User {
@@ -28,6 +29,7 @@ interface User {
 export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sendingBulk, setSendingBulk] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
 
@@ -58,6 +60,25 @@ export default function AdminDashboard() {
     router.push('/admin/login');
   };
 
+  const handleBulkSend = async () => {
+    if (!confirm('Are you sure you want to send registration confirmation emails to ALL registered users? This should only be done once.')) return;
+    
+    setSendingBulk(true);
+    try {
+      const res = await fetch('/api/admin/send-bulk-confirmation', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Successfully sent ${data.stats.successful} emails. ${data.stats.failed} failed.`);
+      } else {
+        alert(data.error || 'Failed to send bulk emails');
+      }
+    } catch (err) {
+      alert('An error occurred while sending emails.');
+    } finally {
+      setSendingBulk(false);
+    }
+  };
+
   const filteredUsers = users.filter(user => 
     user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -76,6 +97,15 @@ export default function AdminDashboard() {
         </div>
         
         <div className="admin-actions">
+          <button 
+            onClick={handleBulkSend}
+            className="share-btn" 
+            disabled={sendingBulk}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(245,197,24,0.1)', borderColor: 'rgba(245,197,24,0.3)' }}
+          >
+            {sendingBulk ? <IconLoader2 className="animate-spin" size={18} /> : <IconSend size={18} />} 
+            RESEND ALL
+          </button>
           <a 
             href="/api/admin/export" 
             className="share-btn" 
