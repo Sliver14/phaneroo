@@ -84,7 +84,7 @@ main {
   font-size: clamp(36px, 9vw, 66px);
   line-height: 0.88;
   color: var(--white);
-  -webkit-text-stroke: 2px var(--gold);
+  /* -webkit-text-stroke: 2px var(--gold); */
   margin-bottom: 8px;
 }
 .event-header h1 span { color: var(--gold); -webkit-text-stroke: 0; }
@@ -352,7 +352,7 @@ input::placeholder, textarea::placeholder { color: #3A3A3A; font-style: italic; 
   font-size: clamp(28px, 7vw, 48px);
   line-height: 0.95;
   color: var(--white);
-  -webkit-text-stroke: 1.5px var(--gold);
+  /* -webkit-text-stroke: 1.5px var(--gold); */
   margin-bottom: 6px;
   opacity: 0;
   animation: slide-up .5s ease forwards 1s;
