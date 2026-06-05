@@ -90,8 +90,6 @@ export default function Home() {
         if (response.ok && result.success) {
           if (result.alreadyRegistered) {
             setWasAlreadyRegistered(true);
-            // Update form data with existing data if needed, 
-            // but we already have what they just typed
           }
           setIsSubmitted(true);
           window.scrollTo({ top: 0, behavior: "smooth" });
@@ -120,6 +118,20 @@ export default function Home() {
     window.open(`https://wa.me/?text=${msg}`, "_blank");
   };
 
+  const registerNew = () => {
+    setFormData({
+      fullName: "",
+      email: "",
+      whatsapp: "",
+      attendance: "",
+      bus: "",
+      busAddress: "",
+    });
+    setIsSubmitted(false);
+    setWasAlreadyRegistered(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const addToCalendar = () => {
     const event = {
       title: "Phaneroo Port Harcourt: Manifestation & Glory",
@@ -140,147 +152,168 @@ export default function Home() {
 
   if (isSubmitted) {
     return (
-      <div className="success-page">
-        <div className="success-inner">
-          <div className="check-ring">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="45" stroke="#1A1A1A" strokeWidth="4" />
-              <circle
-                className="ring-circle"
-                cx="50"
-                cy="50"
-                r="45"
-                stroke="#FFC630"
-                strokeWidth="4"
-                strokeLinecap="round"
-                transform="rotate(-90 50 50)"
-              />
-            </svg>
-            <div className="check-icon">
-              <IconCheck size={42} />
-            </div>
-          </div>
-
-          <h2>{wasAlreadyRegistered ? "ALREADY REGISTERED!" : "YOU'RE IN!"}</h2>
-          <p className="sub-heading">
-            {wasAlreadyRegistered 
-              ? "You have already signed up for this event." 
-              : "Registration Confirmed"}
-          </p>
-
-          <div className="detail-card">
-            <p className="card-title">
-              <IconClipboardCheck
-                size={13}
-                style={{ verticalAlign: "-1px", marginRight: "5px" }}
-              />{" "}
-              Your Details
-            </p>
-
-            <div className="detail-row">
-              <IconUser size={19} />
-              <div>
-                <p className="label">Full Name</p>
-                <p className="value">{formData.fullName}</p>
-              </div>
-            </div>
-
-            <div className="detail-row">
-              <IconMail size={19} />
-              <div>
-                <p className="label">Email Address</p>
-                <p className="value">{formData.email}</p>
-              </div>
-            </div>
-
-            <div className="detail-row">
-              <IconBrandWhatsapp size={19} />
-              <div>
-                <p className="label">WhatsApp</p>
-                <p className="value">{formData.whatsapp}</p>
-              </div>
-            </div>
-
-            <div className="detail-row">
-              <IconMapPinCheck size={19} />
-              <div>
-                <p className="label">Attendance</p>
-                <p className="value">
-                  {formData.attendance === "yes" ? "In-person attendance" : "Online only"}
-                </p>
-              </div>
-            </div>
-
-            {formData.bus === "yes" && (
-              <div className="detail-row">
-                <IconBus size={19} />
-                <div>
-                  <p className="label">Bus Pickup</p>
-                  <p className="value">{formData.busAddress}</p>
+      <main>
+        <div className="banner-wrap">
+          <Image
+            src="/phanero.png"
+            alt="Phaneroo Port Harcourt Banner"
+            width={1200}
+            height={290}
+            priority
+          />
+        </div>
+        <div className="page">
+          <div className="success-page" style={{ padding: 0, background: "transparent" }}>
+            <div className="success-inner">
+              <div className="check-ring">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="45" stroke="#1A1A1A" strokeWidth="4" />
+                  <circle
+                    className="ring-circle"
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    stroke="#FFC630"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    transform="rotate(-90 50 50)"
+                  />
+                </svg>
+                <div className="check-icon">
+                  <IconCheck size={42} />
                 </div>
               </div>
-            )}
 
-            <div className="detail-row">
-              <IconCalendarEvent size={19} />
-              <div>
-                <p className="label">Event Dates</p>
-                <p className="value">Fri 26 & Sat 27 June 2026</p>
+              <h2>{wasAlreadyRegistered ? "ALREADY REGISTERED!" : "YOU'RE IN!"}</h2>
+              <p className="sub-heading">
+                {wasAlreadyRegistered 
+                  ? "You have already signed up for this event." 
+                  : "Registration Confirmed"}
+              </p>
+
+              <div className="detail-card">
+                <p className="card-title">
+                  <IconClipboardCheck
+                    size={13}
+                    style={{ verticalAlign: "-1px", marginRight: "5px" }}
+                  />{" "}
+                  Your Details
+                </p>
+
+                <div className="detail-row">
+                  <IconUser size={19} />
+                  <div>
+                    <p className="label">Full Name</p>
+                    <p className="value">{formData.fullName}</p>
+                  </div>
+                </div>
+
+                <div className="detail-row">
+                  <IconMail size={19} />
+                  <div>
+                    <p className="label">Email Address</p>
+                    <p className="value">{formData.email}</p>
+                  </div>
+                </div>
+
+                <div className="detail-row">
+                  <IconBrandWhatsapp size={19} />
+                  <div>
+                    <p className="label">WhatsApp</p>
+                    <p className="value">{formData.whatsapp}</p>
+                  </div>
+                </div>
+
+                <div className="detail-row">
+                  <IconMapPinCheck size={19} />
+                  <div>
+                    <p className="label">Attendance</p>
+                    <p className="value">
+                      {formData.attendance === "yes" ? "In-person attendance" : "Online only"}
+                    </p>
+                  </div>
+                </div>
+
+                {formData.bus === "yes" && (
+                  <div className="detail-row">
+                    <IconBus size={19} />
+                    <div>
+                      <p className="label">Bus Pickup</p>
+                      <p className="value">{formData.busAddress}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="detail-row">
+                  <IconCalendarEvent size={19} />
+                  <div>
+                    <p className="label">Event Dates</p>
+                    <p className="value">Fri 26 & Sat 27 June 2026</p>
+                  </div>
+                </div>
+
+                <div className="detail-row">
+                  <IconMapPin size={19} />
+                  <div>
+                    <p className="label">Venue</p>
+                    <p className="value">Opal Place, NTA Road, Opp. National Open University</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: "20px", width: "100%", display: "flex", flexDirection: "column", gap: "10px" }}>
+                <button 
+                  className="submit-btn" 
+                  onClick={addToCalendar}
+                  style={{ backgroundColor: "transparent", border: "2px solid #FFC630", color: "#FFC630" }}
+                >
+                  <IconCalendarEvent size={20} /> Add to Google Calendar
+                </button>
+                <button 
+                  className="submit-btn" 
+                  onClick={registerNew}
+                  style={{ backgroundColor: "#1A1A1A", color: "#FFFFFF", border: "1px solid #333" }}
+                >
+                  <IconUser size={20} /> Register Another Person
+                </button>
+              </div>
+
+              <div className="next-steps">
+                <div className="step-box">
+                  <IconBrandWhatsapp size={24} />
+                  <p className="step-title">Watch WhatsApp</p>
+                  <p>Updates & reminders will be sent to your number</p>
+                </div>
+                <div className="step-box">
+                  <IconShare2 size={24} />
+                  <p className="step-title">Tell a Friend</p>
+                  <p>Invite others to join Manifestation & Glory</p>
+                </div>
+                <div className="step-box">
+                  <IconClock size={24} />
+                  <p className="step-title">Arrive Early</p>
+                  <p>Friday 4pm · Saturday 10am</p>
+                </div>
+                <div className="step-box">
+                  <IconPray size={24} />
+                  <p className="step-title">Come Ready</p>
+                  <p>Prepare your heart for glory</p>
+                </div>
+              </div>
+
+              <div className="share-row">
+                <button className="share-btn" onClick={copyLink}>
+                  <IconCopy size={17} /> Copy Link
+                </button>
+                <button className="share-btn" onClick={shareWA}>
+                  <IconBrandWhatsapp size={17} /> Share on WhatsApp
+                </button>
               </div>
             </div>
-
-            <div className="detail-row">
-              <IconMapPin size={19} />
-              <div>
-                <p className="label">Venue</p>
-                <p className="value">Opal Place, NTA Road, Opp. National Open University</p>
-              </div>
-            </div>
           </div>
-
-          <div style={{ marginTop: "20px", width: "100%" }}>
-            <button 
-              className="submit-btn" 
-              onClick={addToCalendar}
-              style={{ backgroundColor: "transparent", border: "2px solid #FFC630", color: "#FFC630" }}
-            >
-              <IconCalendarEvent size={20} /> Add to Google Calendar
-            </button>
-          </div>
-
-          <div className="next-steps">
-            <div className="step-box">
-              <IconBrandWhatsapp size={24} />
-              <p className="step-title">Watch WhatsApp</p>
-              <p>Updates & reminders will be sent to your number</p>
-            </div>
-            <div className="step-box">
-              <IconShare2 size={24} />
-              <p className="step-title">Tell a Friend</p>
-              <p>Invite others to join Manifestation & Glory</p>
-            </div>
-            <div className="step-box">
-              <IconClock size={24} />
-              <p className="step-title">Arrive Early</p>
-              <p>Friday 4pm · Saturday 10am</p>
-            </div>
-            <div className="step-box">
-              <IconPray size={24} />
-              <p className="step-title">Come Ready</p>
-              <p>Prepare your heart for glory</p>
-            </div>
-          </div>
-
-          <div className="share-row">
-            <button className="share-btn" onClick={copyLink}>
-              <IconCopy size={17} /> Copy Link
-            </button>
-            <button className="share-btn" onClick={shareWA}>
-              <IconBrandWhatsapp size={17} /> Share on WhatsApp
-            </button>
-          </div>
+          <p className="footer">Ascend · Phaneroo Ministries</p>
         </div>
-      </div>
+      </main>
     );
   }
 
