@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { getRegistrationEmailTemplate } from "@/lib/emailTemplates";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
@@ -32,25 +34,16 @@ export async function POST(request: Request) {
 
     const newRegistration = result.rows[0];
 
-    // Send confirmation email
+    // Send confirmation email via Resend
     try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: Number(process.env.EMAIL_PORT),
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-
-      await transporter.sendMail({
-        from: `"Phaneroo Port Harcourt" <${process.env.EMAIL_FROM}>`,
+      await resend.emails.send({
+        from: `Phaneroo Port Harcourt <${process.env.EMAIL_FROM}>`,
         to: email,
         subject: "Registration Confirmed! Phaneroo Port Harcourt",
         html: getRegistrationEmailTemplate(fullName),
       });
     } catch (mailError) {
-      console.error("Email sending error:", mailError);
+      console.error("Resend error:", mailError);
       // We don't fail the registration if the email fails, but we log it
     }
 

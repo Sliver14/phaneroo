@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { getEmailTemplate } from "@/lib/emailTemplates";
+import { sendWhatsAppReminder } from "@/lib/whatsapp";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // This endpoint should be protected by a secret token in production
 export async function GET(request: Request) {
@@ -26,42 +29,47 @@ export async function GET(request: Request) {
     }
 
     // Fetch all registrations
-    const result = await query("SELECT full_name, email FROM registrations WHERE email IS NOT NULL");
+    const result = await query("SELECT full_name, email, whatsapp FROM registrations");
     const registrations = result.rows;
 
     if (registrations.length === 0) {
       return NextResponse.json({ message: "No registrations found." });
     }
 
-    // Configure nodemailer (Use your actual SMTP settings in .env.local)
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT),
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    const results = await Promise.allSettled(registrations.map(async (reg) => {
+      // 1. Send Email if email exists
+      if (reg.email) {
+        const html = getEmailTemplate(reg.full_name, diffDays);
+        const subject = diffDays === 0 
+          ? "TODAY IS THE DAY! Phaneroo Port Harcourt" 
+          : `${diffDays} Days to Go! Phaneroo Port Harcourt`;
 
-    const sendPromises = registrations.map(async (reg) => {
-      const html = getEmailTemplate(reg.full_name, diffDays);
-      const subject = diffDays === 0 
-        ? "TODAY IS THE DAY! Phaneroo Port Harcourt" 
-        : `${diffDays} Days to Go! Phaneroo Port Harcourt`;
+        await resend.emails.send({
+          from: `Phaneroo Port Harcourt <${process.env.EMAIL_FROM}>`,
+          to: reg.email,
+          subject: subject,
+          html: html,
+        });
+      }
 
-      return transporter.sendMail({
-        from: `"Phaneroo Port Harcourt" <${process.env.EMAIL_FROM}>`,
-        to: reg.email,
-        subject: subject,
-        html: html,
-      });
-    });
+      // 2. Send WhatsApp if number exists and template is configured
+      if (reg.whatsapp && process.env.WHATSAPP_TEMPLATE_NAME) {
+        await sendWhatsAppReminder(
+          reg.whatsapp,
+          process.env.WHATSAPP_TEMPLATE_NAME,
+          reg.full_name,
+          diffDays
+        );
+      }
+    }));
 
-    await Promise.all(sendPromises);
+    const successful = results.filter(r => r.status === 'fulfilled').length;
+    const failed = results.filter(r => r.status === 'rejected').length;
 
     return NextResponse.json({ 
       success: true, 
-      message: `Sent ${registrations.length} reminders for the ${diffDays}-day interval.` 
+      message: `Processed ${registrations.length} registrations for the ${diffDays}-day interval.`,
+      stats: { successful, failed }
     });
 
   } catch (error) {
