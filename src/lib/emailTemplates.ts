@@ -154,17 +154,7 @@ export const getRegistrationEmailTemplate = (userName: string) => {
   `;
 };
 
-// In src/lib/emailTemplates.ts
-export const getEmailTemplate = (userName: string, daysRemaining: number) => {
-  const isToday = daysRemaining === 0;
-  const isTomorrow = daysRemaining === 1;
-
-  const headline = isToday
-    ? "TODAY IS THE DAY!"
-    : isTomorrow
-      ? "ONE DAY TO GO!"
-      : `${daysRemaining} DAYS TO GO!`;
-
+export const getEmailTemplate = (userName: string) => {
   return `
     <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #0A0A0A; color: #fff; padding: 40px 20px;">
       <div style="text-align: center; margin-bottom: 30px;">
@@ -172,7 +162,7 @@ export const getEmailTemplate = (userName: string, daysRemaining: number) => {
       </div>
 
       <h1 style="text-align: center; font-size: 42px; line-height: 1; color: #FFC630; margin: 20px 0 10px;">
-        ${headline}
+        TODAY IS THE DAY!
       </h1>
 
       <p style="text-align: center; font-size: 20px; color: #FFD95A; margin-bottom: 40px; letter-spacing: 3px;">
@@ -185,21 +175,14 @@ export const getEmailTemplate = (userName: string, daysRemaining: number) => {
         </p>
 
         <p style="font-size: 17px; line-height: 1.65; margin-top: 20px;">
-          ${
-            isToday
-              ? "The wait is over! <strong>Phaneroo Port Harcourt begins today.</strong> Come with great expectation—the Lord has prepared a life-changing encounter for you."
-              : isTomorrow
-                ? "We are just <strong>ONE DAY AWAY</strong> from a powerful encounter with God at Phaneroo Port Harcourt!"
-                : "The glory of the Lord is about to be revealed."
-          }
+          Today is <strong>Friday, 26th June</strong>—the day we've all been waiting for!
+          <strong>Phaneroo Port Harcourt – Manifestation & Glory</strong> begins today.
+          Come with great expectation, because the Lord is set to reveal His glory in a mighty way.
         </p>
 
         <p style="margin-top: 25px; font-size: 16px;">
-          ${
-            isToday
-              ? "Invite someone, arrive early, and come hungry for all that God is set to do."
-              : "Come expectant. Come hungry. The Lord has prepared something special for you."
-          }
+          <strong>Join us today at 4:00 PM</strong> at Opal Place, NTA Road, Port Harcourt.
+          Invite your family and friends, arrive early, and come hungry for an unforgettable encounter with God.
         </p>
       </div>
 

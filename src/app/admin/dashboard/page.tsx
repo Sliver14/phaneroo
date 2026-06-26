@@ -61,7 +61,7 @@ export default function AdminDashboard() {
   };
 
 const handleSendReminder = async () => {
-    if (!confirm('Send "Meeting Starts Tomorrow" reminder to ALL registered users?')) return;
+    if (!confirm('Send "Meeting Starts Today" reminder to ALL registered users?')) return;
     
     setSendingBulk(true);
     try {
@@ -114,7 +114,7 @@ const handleSendReminder = async () => {
             }}
           >
             {sendingBulk ? <IconLoader2 className="animate-spin" size={18} /> : <IconSend size={18} />} 
-            SEND REMINDER (TOMORROW)
+            SEND REMINDER
           </button>
           <a 
             href="/api/admin/export" 
