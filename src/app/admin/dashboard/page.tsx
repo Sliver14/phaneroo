@@ -60,20 +60,23 @@ export default function AdminDashboard() {
     router.push('/admin/login');
   };
 
-  const handleBulkSend = async () => {
-    if (!confirm('Are you sure you want to send registration confirmation emails to ALL registered users? This should only be done once.')) return;
+const handleSendReminder = async () => {
+    if (!confirm('Send "Meeting Starts Tomorrow" reminder to ALL registered users?')) return;
     
     setSendingBulk(true);
     try {
-      const res = await fetch('/api/admin/send-bulk-confirmation', { method: 'POST' });
+      const res = await fetch('/api/admin/send-reminder', { 
+        method: 'POST' 
+      });
       const data = await res.json();
+      
       if (data.success) {
-        alert(`Successfully sent ${data.stats.successful} emails. ${data.stats.failed} failed.`);
+        alert(`✅ Reminder sent!\nSuccessful: ${data.stats.successful}\nFailed: ${data.stats.failed}`);
       } else {
-        alert(data.error || 'Failed to send bulk emails');
+        alert(data.error || 'Failed to send reminders');
       }
     } catch (err) {
-      alert('An error occurred while sending emails.');
+      alert('An error occurred.');
     } finally {
       setSendingBulk(false);
     }
@@ -98,13 +101,20 @@ export default function AdminDashboard() {
         
         <div className="admin-actions">
           <button 
-            onClick={handleBulkSend}
+            onClick={handleSendReminder}
             className="share-btn" 
             disabled={sendingBulk}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(245,197,24,0.1)', borderColor: 'rgba(245,197,24,0.3)' }}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              background: 'rgba(245,197,24,0.15)', 
+              borderColor: '#FFC630',
+              color: '#FFC630'
+            }}
           >
             {sendingBulk ? <IconLoader2 className="animate-spin" size={18} /> : <IconSend size={18} />} 
-            RESEND ALL
+            SEND REMINDER (TOMORROW)
           </button>
           <a 
             href="/api/admin/export" 
