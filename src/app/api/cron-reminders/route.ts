@@ -44,7 +44,7 @@ export async function GET(request: Request) {
           return;
         }
 
-        const html = getEmailTemplate(reg.full_name, diffDays);
+        const html = getEmailTemplate(reg.full_name);
         const subject = diffDays === 0 
           ? "TODAY IS THE DAY! Phaneroo Port Harcourt" 
           : `${diffDays} Days to Go! Phaneroo Port Harcourt`;
